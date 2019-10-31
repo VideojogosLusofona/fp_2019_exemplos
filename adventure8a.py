@@ -62,10 +62,22 @@ def move_player(direction_text, direction_index, x_inc, y_inc):
 
     return True
 
-move_north = lambda : move_player("north", 0, 0, -1)
-move_east = lambda : move_player("east", 1, 1, 0)
-move_south = lambda : move_player("south", 2, 0, 1)
-move_west = lambda : move_player("west", 3, -1, 0)
+move_north = lambda params : move_player("north", 0, 0, -1)
+move_east = lambda params : move_player("east", 1, 1, 0)
+move_south = lambda params : move_player("south", 2, 0, 1)
+move_west = lambda params : move_player("west", 3, -1, 0)
+
+object_usage = {
+    ("shovel", "dirt") : lambda : print("You dig")
+}
+
+def use_object(params):
+    tmp = ( params[1], params[2] )
+
+    if (tmp in object_usage):
+        object_usage[tmp]()
+    else:
+        print("I'm not sure what you want me to do with " + params[1])
 
 command_processor = {
     "north" : move_north,
@@ -75,20 +87,24 @@ command_processor = {
     "south": move_south,
     "s": move_south,
     "west": move_west,
-    "w": move_west
+    "w": move_west,
+    "use": use_object
 }
 
-command = ""
-while (command != "exit"):    
+input_string = ""
+while (input_string != "exit"):    
     print("")
     print("What now?")
-    command = input()
-    command = command.strip()
-    if (command == ""):
+    input_string = input()
+    input_string = input_string.strip()
+    if (input_string == ""):
         continue
 
+    phrase = input_string.split()
+    command = phrase[0]
+
     if (command in command_processor):
-        command_processor[command]()
+        command_processor[command](phrase)
     elif (command == "exit"):
         break
     elif (command == "quit"):
