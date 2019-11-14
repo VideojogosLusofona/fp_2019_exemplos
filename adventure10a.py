@@ -16,6 +16,15 @@ class Room:
     def GetExitCount(self):
         return self.exits.count(True)
 
+    def GetItems(self):
+        ret = []
+
+        for item in items:
+            if ((item.position == (self.x, self.y)) and (not item.inInventory)):
+                ret.append(item)
+
+        return ret
+
     def ShowRoomDescription(self):
         s = self.description
 
@@ -56,6 +65,28 @@ class Room:
 
             print(s)
 
+        items_in_room = self.GetItems()
+
+        if (len(items_in_room) == 0):
+            pass
+        elif (len(items_in_room) == 1):
+            print("You can see a " + items_in_room[0].name)
+        else:
+            s = "You can see "
+            count = 0
+            nItems = len(items_in_room)
+            for i in range(0, len(items_in_room)):
+                s = s + items_in_room[i].name
+                if (count < (nItems - 2)):
+                    s = s + ", "
+                elif (count < (nItems - 1)):
+                    s = s + " and "
+                else:
+                    s = s + "."
+                count = count + 1
+
+            print(s)
+
     def OpenPassage(self, direction):
         global rooms
 
@@ -66,6 +97,18 @@ class Room:
         ndirection = (direction + 2) % 4
 
         rooms[ny][nx].exits[ndirection] = True
+
+class Item:
+    name = ""
+    description = ""
+    position = (0,0)
+    inInventory = False
+
+    def __init__(self, name, position, description):
+        self.name = name
+        self.description = description
+        self.position = position
+        self.inInventory = False
 
 rooms = [
     [ 
@@ -103,6 +146,11 @@ rooms = [
         Room(3, 4, "Room description 3, 4",  True, False, False, False ),
         Room(4, 4, "Room description 4, 4",  True, False, False, False )
     ]
+]
+
+items = [
+    Item("apple", (2,2), "A shiny red apple"),
+    Item("bottle", (2,2), "A bottle full of water")
 ]
 
 exit_name = [ "north", "east", "south", "west" ]
