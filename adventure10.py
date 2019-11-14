@@ -15,6 +15,17 @@ class Room:
 
     def GetExitCount(self):
         return self.exits.count(True)
+
+    def GetItems(self):
+        global items
+
+        ret = []
+
+        for item in items:
+            if ((not item.inInventory) and (item.position == (self.x, self.y))):
+                ret.append(item)
+
+        return ret
         
     def ShowRoomDescription(self):
         s = self.description
@@ -30,6 +41,28 @@ class Room:
                 s = s[0:i1] + s[i2 +2:]
 
         print(s)
+
+        items_in_room = self.GetItems()
+        nItems = len(items_in_room)
+
+        if (nItems == 0):
+            pass
+        elif (nItems == 1):
+            print("You can see a " + items_in_room[0].name)
+        else:
+            s = "You can see a "
+            count = 0
+            for item in items_in_room:
+                s = s + item.name
+                if (count < (nItems - 2)):
+                    s = s + ", "
+                elif (count < (nItems - 1)):
+                    s = s + " and "
+                else:
+                    s = s + "."
+                count = count + 1
+
+            print(s)
 
         nExits = self.GetExitCount()
 
@@ -65,6 +98,17 @@ class Room:
 
         rooms[ny][nx].exits[ndirection] = True
 
+class Item:
+    name = ""
+    description = ""
+    position = (0,0)
+    inInventory = False
+
+    def __init__(self, position, name, description):
+        self.name = name
+        self.description = description
+        self.position = position
+        self.inInventory = False
 
 rooms = [
     [ 
@@ -102,6 +146,14 @@ rooms = [
         Room(3, 4, "Room description 3, 4",  True, False, False, False ),
         Room(4, 4, "Room description 4, 4",  True, False, False, False )
     ]
+]
+
+items = [
+    Item((2,2), "apple", "A shiny red apple"),
+    Item((2,2), "bottle", "A bottle of what appears to be water"),
+    Item((2,2), "acorn", "An empty acorn"),
+    Item((2,3), "candelabra", "An ornate candelabra"),
+    Item((3,3), "skeleton", "A skeleton, missing the skull")
 ]
 
 exit_name = [ "north", "east", "south", "west" ]
